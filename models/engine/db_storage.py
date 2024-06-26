@@ -56,7 +56,7 @@ class DBStorage:
                     key = "{}.{}".format(cls_name, obj.id)
                     objects[key] = obj
         else:
-            if type(cls) == str and cls in classes:
+            if type(cls) is str and cls in classes:
                 cls = classes[cls]
             cls_name = cls.__name__
             objs = self.__session.query(cls).all()

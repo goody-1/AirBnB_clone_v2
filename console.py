@@ -27,7 +27,9 @@ class HBNBCommand(cmd.Cmd):
     types = {
              'number_rooms': int, 'number_bathrooms': int,
              'max_guest': int, 'price_by_night': int,
-             'latitude': float, 'longitude': float
+             'latitude': float, 'longitude': float,
+             'description': str, 'name': str, 'email': str,
+             'password': str, 'first_name': str, 'last_name': str,
             }
 
     def preloop(self):
@@ -113,15 +115,37 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def do_create(self, args):
-        """ Create an object of any class"""
-        if not args:
-            print("** class name missing **")
-            return
-        elif args not in HBNBCommand.classes:
-            print("** class doesn't exist **")
-            return
-        new_instance = HBNBCommand.classes[args]()
+    def do_create(self, usr_arg):
+        # Split the input by spaces, but respect quoted strings
+        args = usr_arg.split()
+        class_name = args[0]
+        args_dict = {}
+
+        for arg in args[1:]:
+            if '=' not in arg:
+                continue
+            key, value = arg.split('=', 1)  # Split only on the first '='
+            key = key.strip()
+
+            if key not in HBNBCommand.types:
+                continue
+
+            if value.startswith('"') and value.endswith('"'):
+                # Remove quotes and replace underscores
+                value = value[1:-1].replace('_', ' ')
+                args_dict[key] = value
+            elif value.isdigit():
+                args_dict[key] = int(value)
+            elif value.replace('.', '', 1).isdigit() and value.count('.') == 1:
+                args_dict[key] = float(value)
+            else:
+                continue  # Skip if none of the conditions matched
+
+        new_instance = HBNBCommand.classes[class_name]()
+        # Set the attributes from args_dict
+        for key, value in args_dict.items():
+            setattr(new_instance, key, value)
+
         storage.save()
         print(new_instance.id)
         storage.save()

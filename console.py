@@ -146,7 +146,8 @@ class HBNBCommand(cmd.Cmd):
 
                 # Check if it's a valid float
                 elif value_stripped.count('.') == 1 and \
-                        value_stripped.replace('.', '', 1).lstrip('-').isdigit():
+                        value_stripped.replace('.', '', 1)\
+                            .lstrip('-').isdigit():
                     args_dict[key] = float(value)
                 else:
                     continue  # Skip if none of the conditions matched

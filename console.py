@@ -136,12 +136,20 @@ class HBNBCommand(cmd.Cmd):
                 # Remove quotes and replace underscores
                 value = value[1:-1].replace('_', ' ')
                 args_dict[key] = value
-            elif value.isdigit():
-                args_dict[key] = int(value)
-            elif value.replace('.', '', 1).isdigit() and value.count('.') == 1:
-                args_dict[key] = float(value)
+
             else:
-                continue  # Skip if none of the conditions matched
+                value_stripped = value.strip()
+
+                # Check if it's a valid integer
+                if value_stripped.lstrip('-').isdigit():
+                    args_dict[key] = int(value)
+
+                # Check if it's a valid float
+                elif value_stripped.count('.') == 1 and \
+                        value_stripped.replace('.', '', 1).lstrip('-').isdigit():
+                    args_dict[key] = float(value)
+                else:
+                    continue  # Skip if none of the conditions matched
 
         new_instance = HBNBCommand.classes[class_name]()
         # Set the attributes from args_dict
@@ -345,7 +353,3 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
-
-
-if __name__ == "__main__":
-    HBNBCommand().cmdloop()

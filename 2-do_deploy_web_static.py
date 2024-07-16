@@ -4,11 +4,11 @@ Distributes an archive to the web servers
 
 function: do_deploy()
 """
-from fabric.api import env, put, run
+from fabric.api import env, put, run, sudo
 import os
 
 env.user = "ubuntu"
-env.hosts = ['100.25.194.252', '3.94.213.134']
+env.hosts = ['107.23.46.106', '3.94.213.134']
 
 
 def do_deploy(archive_path):
@@ -32,21 +32,21 @@ def do_deploy(archive_path):
     try:
         put(archive_path, remote_tmp_path)
         remote_web_static_path = f"{remote_releases_path}{archive_filename}"
-        run(f"mkdir -p {remote_web_static_path}")
+        sudo(f"mkdir -p {remote_web_static_path}")
         # Uncompress the archive to the /data/web_static/releases/ directory
-        run(
+        sudo(
             f"tar -xzf {remote_tmp_path}{archive} -C {remote_web_static_path}"
             )
         # Remove archive from the web server
-        run(f"rm {remote_tmp_path}{archive}")
+        sudo(f"rm {remote_tmp_path}{archive}")
         # Copy web_static to the specific release
-        run(f"mv \
+        sudo(f"mv \
                 {remote_web_static_path}/web_static/* {remote_web_static_path}"
             )
-        run(f"rm -rf {remote_web_static_path}/web_static")
+        sudo(f"rm -rf {remote_web_static_path}/web_static")
         # Delete symbolic link and create new one
-        run(f"rm {symlink}")
-        run(f"ln -s {remote_web_static_path} {symlink}")
+        sudo(f"rm {symlink}")
+        sudo(f"ln -s {remote_web_static_path} {symlink}")
         print('New version deployed!')
     except Exception as e:
         return False

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/python3
 
 from fabric import task
 from fabric.api import run, env

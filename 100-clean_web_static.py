@@ -7,7 +7,7 @@ import operator
 import os
 
 env.user = "ubuntu"
-env.hosts = ['100.25.194.252', '3.94.213.134']
+env.hosts = ['107.23.46.106', '3.94.213.134']
 env.key_filename = '~/.ssh/school'
 
 

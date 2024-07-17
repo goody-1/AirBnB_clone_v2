@@ -6,7 +6,7 @@ function: deploy()
 """
 
 from fabric import decorators
-from fabric.api import env, put, run, local
+from fabric.api import env, put, run, local, sudo
 from datetime import datetime
 import os
 
@@ -21,7 +21,7 @@ def deploy():
     return do_deploy(do_pack())
 
 
-@decorators.runs_once
+@decorators.sudos_once
 def do_pack():
     """Generates a .tgz archive and saves with current date
     """
@@ -56,21 +56,23 @@ def do_deploy(archive_path):
     remote_tmp_path = "/tmp/"
     remote_releases_path = "/data/web_static/releases/"
     symlink = "/data/web_static/current"
+    root = "/var/www/html/web_static"
 
     try:
         put(archive_path, remote_tmp_path)
         remote_web_static_path = f"{remote_releases_path}{archive_filename}"
-        run(f"mkdir -p {remote_web_static_path}")
-        run(
+        sudo(f"mkdir -p {remote_web_static_path}")
+        sudo(
             f"tar -xzf {remote_tmp_path}{archive} -C {remote_web_static_path}"
             )
-        run(f"rm {remote_tmp_path}{archive}")
-        run(f"mv \
+        sudo(f"rm {remote_tmp_path}{archive}")
+        sudo(f"mv \
                 {remote_web_static_path}/web_static/* {remote_web_static_path}"
             )
-        run(f"rm -rf {remote_web_static_path}/web_static")
-        run(f"rm {symlink}")
-        run(f"ln -s {remote_web_static_path} {symlink}")
+        sudo(f"rm -rf {remote_web_static_path}/web_static")
+        sudo(f"if [ -L {symlink} ]; then rm {symlink}; fi")
+        sudo(f"ln -s {remote_web_static_path} {symlink}")
+        sudo(f"ln -s {symlink} {root}")
         print('New version deployed!')
     except Exception as e:
         return False

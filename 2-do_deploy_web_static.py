@@ -28,6 +28,7 @@ def do_deploy(archive_path):
     remote_tmp_path = "/tmp/"
     remote_releases_path = "/data/web_static/releases/"
     symlink = "/data/web_static/current"
+    root = "/var/www/html/web_static"
 
     try:
         put(archive_path, remote_tmp_path)
@@ -45,8 +46,9 @@ def do_deploy(archive_path):
             )
         sudo(f"rm -rf {remote_web_static_path}/web_static")
         # Delete symbolic link and create new one
-        sudo(f"rm {symlink}")
+        sudo(f"if [ -L {symlink} ]; then rm {symlink}; fi")
         sudo(f"ln -s {remote_web_static_path} {symlink}")
+        sudo(f"ln -s {symlink} {root}")
         print('New version deployed!')
     except Exception as e:
         return False

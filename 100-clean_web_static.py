@@ -13,6 +13,16 @@ env.key_filename = '~/.ssh/school'
 
 @task
 def do_clean(c, number=0):
+    """
+    Cleans up old versions of the web static files.
+
+    Args:
+        c (fabric.Connection): The fabric connection object.
+        number (int, optional): The number of versions to keep. Defaults to 0.
+
+    Returns:
+        bool: True if the cleanup is successful, False otherwise.
+    """
     number = int(number)
 
     if number < 1:

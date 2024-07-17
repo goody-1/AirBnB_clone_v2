@@ -67,8 +67,8 @@ def do_deploy(archive_path):
             )
         sudo(f"rm {remote_tmp_path}{archive}")
         sudo(f"mv \
-                {remote_web_static_path}/web_static/* {remote_web_static_path}"
-            )
+{remote_web_static_path}/web_static/* {remote_web_static_path}"
+             )
         sudo(f"rm -rf {remote_web_static_path}/web_static")
         sudo(f"if [ -L {symlink} ]; then rm {symlink}; fi")
         sudo(f"ln -s {remote_web_static_path} {symlink}")
